@@ -1,0 +1,30 @@
+name: build
+
+on:
+  push:
+    branches:
+    - brln_windows_deployment_fix
+
+jobs:
+  build:
+    name: Build Stage
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Make Build Directory
+      run: mkdir build
+    - name: Configuration
+      run: cmake ..
+      working-directory: ./build
+    - name: Build
+      run: cmake --build .
+      working-directory: ./build
+    # Upload artifacts
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ matrix.os }}-artifacts
+        path: ./build/
